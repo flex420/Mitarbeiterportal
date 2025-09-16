@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { VacationStatus } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { auth } from "@/lib/auth";
@@ -70,8 +71,8 @@ export default async function DashboardPage() {
                     {dayjs(vacation.startDate).format("DD.MM.YYYY")} – {dayjs(vacation.endDate).format("DD.MM.YYYY")}
                   </p>
                 </div>
-                <Badge variant={vacation.status === "genehmigt" ? "success" : "secondary"}>
-                  {vacation.status.toUpperCase()}
+                <Badge variant={vacation.status === VacationStatus.GENEHMIGT ? "success" : "secondary"}>
+                  {vacation.status.toString()}
                 </Badge>
               </div>
             ))
@@ -81,3 +82,4 @@ export default async function DashboardPage() {
     </div>
   );
 }
+

@@ -3,11 +3,9 @@
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import deLocale from "@fullcalendar/core/locales/de";
-
-const FullCalendar = dynamic(() => import("@fullcalendar/react"), { ssr: false });
-const dayGridPlugin = dynamic(() => import("@fullcalendar/daygrid"), { ssr: false });
-const timeGridPlugin = dynamic(() => import("@fullcalendar/timegrid"), { ssr: false });
-const interactionPlugin = dynamic(() => import("@fullcalendar/interaction"), { ssr: false });
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
 type Event = {
   id: string;
@@ -19,6 +17,8 @@ type Event = {
     type: string;
   };
 };
+
+const FullCalendar = dynamic(() => import("@fullcalendar/react"), { ssr: false });
 
 export function VacationCalendar({ events }: { events: Event[] }) {
   const plugins = useMemo(() => [dayGridPlugin, timeGridPlugin, interactionPlugin], []);

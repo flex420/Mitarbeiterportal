@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@fullcalendar/core':
+    specifier: ^6.1.19
+    version: 6.1.19
   '@fullcalendar/daygrid':
     specifier: ^6.1.11
     version: 6.1.19(@fullcalendar/core@6.1.19)

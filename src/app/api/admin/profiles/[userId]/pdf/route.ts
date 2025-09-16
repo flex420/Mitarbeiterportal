@@ -19,6 +19,7 @@ export async function GET(_request: NextRequest, { params }: { params: { userId:
   }
 
   const buffer = await renderProfilePdf(profile);
+  const body = buffer as unknown as BodyInit;
 
   await logAudit({
     actorUserId: admin.id,
@@ -28,7 +29,7 @@ export async function GET(_request: NextRequest, { params }: { params: { userId:
     diff: { targetUser: profile.user.username }
   });
 
-  return new NextResponse(buffer, {
+  return new NextResponse(body, {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="profil-${profile.user.username}.pdf"`

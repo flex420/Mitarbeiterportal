@@ -1,6 +1,5 @@
 import { z } from "zod";
 import dayjs from "@/lib/date";
-import { allowVacationOverlap } from "@/lib/config";
 
 export const registerSchema = z.object({
   csrfToken: z.string().min(1),
@@ -8,38 +7,35 @@ export const registerSchema = z.object({
   password: z.string().min(8).max(128)
 });
 
-export const loginSchema = z.object({
+export const loginSchema = registerSchema;
+
+const dateValidator = (values: { startDate: string; endDate: string }, ctx: z.RefinementCtx) => {
+  const start = dayjs(values.startDate);
+  const end = dayjs(values.endDate);
+  if (!start.isValid()) {
+    ctx.addIssue({ code: "custom", path: ["startDate"], message: "Ungültiges Datum" });
+  }
+  if (!end.isValid()) {
+    ctx.addIssue({ code: "custom", path: ["endDate"], message: "Ungültiges Datum" });
+  }
+  if (start.isValid() && end.isValid() && end.isBefore(start)) {
+    ctx.addIssue({ code: "custom", path: ["endDate"], message: "Ende muss nach Start liegen" });
+  }
+};
+
+const vacationBaseSchema = z.object({
   csrfToken: z.string().min(1),
-  username: z.string().min(3).max(50),
-  password: z.string().min(8).max(128)
+  startDate: z.string().min(1),
+  endDate: z.string().min(1),
+  type: z.enum(["urlaub", "sonder"]),
+  comment: z.string().max(500).optional(),
+  status: z.enum(["offen", "genehmigt", "gesperrt"]).default("offen")
 });
 
-export const vacationCreateSchema = z
-  .object({
-    csrfToken: z.string().min(1),
-    startDate: z.string().min(1),
-    endDate: z.string().min(1),
-    type: z.enum(["urlaub", "sonder"]),
-    comment: z.string().max(500).optional(),
-    status: z.enum(["offen", "genehmigt", "gesperrt"]).default("offen")
-  })
-  .superRefine((values, ctx) => {
-    const start = dayjs(values.startDate);
-    const end = dayjs(values.endDate);
-    if (!start.isValid()) {
-      ctx.addIssue({ code: "custom", path: ["startDate"], message: "Ungültiges Datum" });
-    }
-    if (!end.isValid()) {
-      ctx.addIssue({ code: "custom", path: ["endDate"], message: "Ungültiges Datum" });
-    }
-    if (start.isValid() && end.isValid() && end.isBefore(start)) {
-      ctx.addIssue({ code: "custom", path: ["endDate"], message: "Ende muss nach Start liegen" });
-    }
-  });
-
-export const vacationUpdateSchema = vacationCreateSchema.extend({
-  id: z.string().cuid()
-});
+export const vacationCreateSchema = vacationBaseSchema.superRefine(dateValidator);
+export const vacationUpdateSchema = vacationBaseSchema
+  .extend({ id: z.string().cuid() })
+  .superRefine(dateValidator);
 
 export type VacationCreateInput = z.infer<typeof vacationCreateSchema>;
 export type VacationUpdateInput = z.infer<typeof vacationUpdateSchema>;

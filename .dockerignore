@@ -1,0 +1,13 @@
+node_modules
+.next
+dist
+.git
+.gitignore
+Dockerfile
+README.md
+storage
+coverage
+playwright-report
+.vscode
+.env
+.env.local

@@ -29,8 +29,8 @@ export async function GET(_request: NextRequest, { params }: { params: { token: 
     return NextResponse.json({ error: "Keine Berechtigung" }, { status: 403 });
   }
 
-  const file = await storage.read(download.sickNote.fileKey);
-  if (!file) {
+  const fileBuffer = await storage.read(download.sickNote.fileKey);
+  if (!fileBuffer) {
     return NextResponse.json({ error: "Datei nicht gefunden" }, { status: 404 });
   }
 
@@ -44,7 +44,9 @@ export async function GET(_request: NextRequest, { params }: { params: { token: 
     diff: { fileName: download.sickNote.fileName }
   });
 
-  return new NextResponse(file, {
+  const body = fileBuffer as unknown as BodyInit;
+
+  return new NextResponse(body, {
     headers: {
       "Content-Type": download.sickNote.mimeType,
       "Content-Disposition": `attachment; filename="${encodeURIComponent(download.sickNote.fileName)}"`

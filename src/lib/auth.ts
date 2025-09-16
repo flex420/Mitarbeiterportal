@@ -18,11 +18,16 @@ export const authOptions: NextAuthConfig = {
         if (!credentials?.username || !credentials?.password) {
           return null;
         }
-        const user = await prisma.user.findUnique({ where: { username: credentials.username } });
+        const username = credentials.username as string;
+        const password = credentials.password as string;
+        const user = await prisma.user.findUnique({
+          where: { username },
+          include: { profile: true }
+        });
         if (!user) {
           return null;
         }
-        const valid = await argon2.verify(user.passwordHash, credentials.password);
+        const valid = await argon2.verify(user.passwordHash, password);
         if (!valid) {
           return null;
         }
@@ -59,4 +64,5 @@ export const authOptions: NextAuthConfig = {
   secret: process.env.NEXTAUTH_SECRET
 };
 
-export const { auth, signIn, signOut } = NextAuth(authOptions);
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);
+export const { GET, POST } = handlers;

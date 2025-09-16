@@ -3,18 +3,20 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import deLocale from "@fullcalendar/core/locales/de";
-
-const FullCalendar = dynamic(() => import("@fullcalendar/react"), { ssr: false });
-const dayGridPlugin = dynamic(() => import("@fullcalendar/daygrid"), { ssr: false });
-const timeGridPlugin = dynamic(() => import("@fullcalendar/timegrid"), { ssr: false });
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
 
 type Event = {
   id: string;
   title: string;
   start: string;
   end: string;
-  extendedProps: { employees: string[] };
+  extendedProps: {
+    employees: string[];
+  };
 };
+
+const FullCalendar = dynamic(() => import("@fullcalendar/react"), { ssr: false });
 
 export function ShiftCalendar({ events }: { events: Event[] }) {
   const plugins = useMemo(() => [dayGridPlugin, timeGridPlugin], []);
