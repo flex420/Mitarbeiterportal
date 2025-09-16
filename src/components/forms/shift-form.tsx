@@ -21,8 +21,16 @@ export function ShiftForm({
   onRemove
 }: {
   csrfToken: string;
-  users: Array<Pick<User, "id" | "username"> & { profile: { vorname: string | null; nachname: string | null } | null }>;
-  shifts: Array<Shift & { assignments: Array<ShiftAssignment & { user: Pick<User, "id" | "username"> & { profile: { vorname: string | null; nachname: string | null } | null }> }>;
+  users: Array<
+    Pick<User, "id" | "username"> & { profile: { vorname: string | null; nachname: string | null } | null }
+  >;
+  shifts: Array<
+    Shift & {
+      assignments: Array<
+        ShiftAssignment & { user: Pick<User, "id" | "username"> & { profile: { vorname: string | null; nachname: string | null } | null } }
+      >
+    }
+  >;
   onCreate: (input: ShiftCreateInput) => Promise<ActionResult>;
   onAssign: (input: { csrfToken: string; shiftId: string; userId: string }) => Promise<ActionResult>;
   onRemove: (input: { csrfToken: string; shiftId: string; userId: string }) => Promise<ActionResult>;
@@ -113,7 +121,7 @@ export function ShiftForm({
           <div key={shift.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
             <div>
               <p className="font-medium">
-                {dayjs(shift.date).format("DD.MM.YYYY")} {dayjs(shift.startTime).format("HH:mm")} – {dayjs(shift.endTime).format("HH:mm")}
+                {dayjs(shift.date).format("DD.MM.YYYY")} {dayjs(shift.startTime).format("HH:mm")} - {dayjs(shift.endTime).format("HH:mm")}
               </p>
               <p className="text-sm text-slate-600">{shift.role ?? "Allgemein"}</p>
               {shift.note && <p className="text-sm text-slate-500">{shift.note}</p>}

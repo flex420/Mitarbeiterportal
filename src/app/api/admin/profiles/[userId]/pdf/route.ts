@@ -31,7 +31,7 @@ export async function GET(_request: NextRequest, { params }: { params: { userId:
   return new NextResponse(buffer, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": ttachment; filename="profil-.pdf"
+      "Content-Disposition": `attachment; filename="profil-${profile.user.username}.pdf"`
     }
   });
 }

@@ -47,7 +47,7 @@ export async function GET(_request: NextRequest, { params }: { params: { token: 
   return new NextResponse(file, {
     headers: {
       "Content-Type": download.sickNote.mimeType,
-      "Content-Disposition": ttachment; filename=""
+      "Content-Disposition": `attachment; filename="${encodeURIComponent(download.sickNote.fileName)}"`
     }
   });
 }
