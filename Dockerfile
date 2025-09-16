@@ -2,9 +2,11 @@ FROM node:20-alpine AS base
 WORKDIR /app
 ENV PNPM_HOME=/pnpm
 ENV PATH="$PNPM_HOME:$PATH"
+RUN apk add --no-cache openssl
 RUN corepack enable && corepack prepare pnpm@8.15.5 --activate
 
 COPY package.json pnpm-lock.yaml* ./
+COPY prisma ./prisma
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
@@ -18,6 +20,7 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PNPM_HOME=/pnpm
 ENV PATH="$PNPM_HOME:$PATH"
+RUN apk add --no-cache openssl
 RUN corepack enable && corepack prepare pnpm@8.15.5 --activate
 RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
 
