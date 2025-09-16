@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: portal
+      POSTGRES_PASSWORD: portal
+      POSTGRES_DB: portal
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://portal:portal@db:5432/portal}
+      NEXTAUTH_URL: ${APP_BASE_URL:-http://localhost:3000}
+      NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./storage:/app/storage
+
+  # mailhog:
+  #   image: mailhog/mailhog
+  #   restart: always
+  #   ports:
+  #     - "8025:8025"
+
+volumes:
+  postgres-data:

@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+enum VacationType {
+  URLAUB  @map("urlaub")
+  SONDER  @map("sonder")
+}
+
+enum VacationStatus {
+  OFFEN      @map("offen")
+  GENEHMIGT  @map("genehmigt")
+  GESPERRT   @map("gesperrt")
+}
+
+model User {
+  id           String             @id @default(cuid())
+  username     String             @unique
+  passwordHash String
+  role         Role               @default(EMPLOYEE)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  profile      EmployeeProfile?
+  vacations    Vacation[]
+  sickNotes    SickNote[]
+  assignments  ShiftAssignment[]
+  auditLogs    AuditLog[]         @relation("ActorAuditLogs")
+  downloadKeys DownloadToken[]
+
+  @@index([role])
+}
+
+model EmployeeProfile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id])
+  vorname    String
+  nachname   String
+  adresse    String
+  telefon    String
+  geburtstag DateTime?
+  bankIban   String?
+  steuerId   String?
+  notizen    String?
+  updatedAt  DateTime @updatedAt
+}
+
+model Vacation {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  startDate DateTime
+  endDate   DateTime
+  type      VacationType
+  status    VacationStatus  @default(OFFEN)
+  comment   String?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, startDate, endDate])
+}
+
+model SickNote {
+  id        String         @id @default(cuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id])
+  fileKey   String         @unique
+  fileName  String
+  fileSize  Int
+  mimeType  String
+  note      String?
+  uploadedAt DateTime      @default(now())
+  downloads DownloadToken[]
+
+  @@index([userId, uploadedAt])
+}
+
+model Shift {
+  id        String           @id @default(cuid())
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime
+  role      String?
+  note      String?
+  assignments ShiftAssignment[]
+  createdAt DateTime          @default(now())
+
+  @@index([date])
+}
+
+model ShiftAssignment {
+  id        String @id @default(cuid())
+  shiftId   String
+  userId    String
+  createdAt DateTime @default(now())
+  shift     Shift   @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([shiftId, userId])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  actor       User?    @relation("ActorAuditLogs", fields: [actorUserId], references: [id])
+  entityType  String
+  entityId    String
+  action      String
+  diff        Json?
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, entityId])
+}
+
+model DownloadToken {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  sickNoteId String
+  sickNote   SickNote @relation(fields: [sickNoteId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+}
