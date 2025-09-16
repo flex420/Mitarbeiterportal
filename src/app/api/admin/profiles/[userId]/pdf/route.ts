@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from \ next/server\;
-import { auth } from \@/lib/auth\;
-import { requireAdmin } from \@/lib/rbac\;
-import { prisma } from \@/lib/prisma\;
-import { renderProfilePdf } from \@/lib/pdf\;
-import { logAudit } from \@/lib/audit\;
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/rbac";
+import { prisma } from "@/lib/prisma";
+import { renderProfilePdf } from "@/lib/pdf";
+import { logAudit } from "@/lib/audit";
 
 export async function GET(_request: NextRequest, { params }: { params: { userId: string } }) {
   const session = await auth();
@@ -15,23 +15,23 @@ export async function GET(_request: NextRequest, { params }: { params: { userId:
   });
 
   if (!profile) {
-    return NextResponse.json({ error: \Profil nicht gefunden\ }, { status: 404 });
+    return NextResponse.json({ error: "Profil nicht gefunden" }, { status: 404 });
   }
 
   const buffer = await renderProfilePdf(profile);
 
   await logAudit({
     actorUserId: admin.id,
-    entityType: \EmployeeProfile\,
+    entityType: "EmployeeProfile",
     entityId: profile.id,
-    action: \PDF_EXPORT\,
+    action: "PDF_EXPORT",
     diff: { targetUser: profile.user.username }
   });
 
   return new NextResponse(buffer, {
     headers: {
-      \Content-Type\: \application/pdf\,
-      \Content-Disposition\: `attachment; filename="profil-${profile.user.username}.pdf"`
+      "Content-Type": "application/pdf",
+      "Content-Disposition": ttachment; filename="profil-.pdf"
     }
   });
 }
