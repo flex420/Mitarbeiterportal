@@ -1,9 +1,9 @@
 node_modules/
-.next/
+/.next/
 dist/
 .env
 .env.local
-storage/
+/storage/
 coverage/
 playwright-report/
 .prisma/
