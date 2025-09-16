@@ -2,7 +2,7 @@ import { SickNoteUploadForm } from "@/components/forms/sick-note-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { issueCsrfToken } from "@/lib/csrf";
+import { requestCsrfToken } from "@/lib/csrf";
 import { requireUser } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import dayjs from "@/lib/date";
@@ -13,7 +13,7 @@ export default async function SickNotesPage() {
   const session = await auth();
   const currentUser = requireUser(session);
 
-  const csrfToken = await issueCsrfToken();
+  const csrfToken = await requestCsrfToken();
 
   const notes = await prisma.sickNote.findMany({
     where: currentUser.role === "ADMIN" ? {} : { userId: currentUser.id },
@@ -73,3 +73,5 @@ export default async function SickNotesPage() {
     </div>
   );
 }
+
+

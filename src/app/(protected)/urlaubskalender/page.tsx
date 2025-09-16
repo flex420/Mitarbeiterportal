@@ -2,7 +2,7 @@ import { VacationCreateForm } from "@/components/forms/vacation-form";
 import { VacationCalendar } from "@/components/calendar/vacation-calendar";
 import { auth } from "@/lib/auth";
 import { requireUser } from "@/lib/rbac";
-import { issueCsrfToken } from "@/lib/csrf";
+import { requestCsrfToken } from "@/lib/csrf";
 import { prisma } from "@/lib/prisma";
 import dayjs from "@/lib/date";
 import {
@@ -23,7 +23,7 @@ export default async function VacationPage() {
     orderBy: { startDate: "asc" }
   });
 
-  const csrfToken = issueCsrfToken();
+  const csrfToken = await requestCsrfToken();
   const ownVacations = vacations.filter((vac) => vac.userId === currentUser.id);
 
   const calendarEvents = vacations.map((vac) => ({
@@ -185,3 +185,5 @@ export default async function VacationPage() {
     </div>
   );
 }
+
+

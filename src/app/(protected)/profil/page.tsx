@@ -1,7 +1,7 @@
 import { ProfileForm } from "@/components/forms/profile-form";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { issueCsrfToken } from "@/lib/csrf";
+import { requestCsrfToken } from "@/lib/csrf";
 import { requireUser } from "@/lib/rbac";
 import { updateProfileAction } from "@/app/actions/profiles";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ export default async function ProfilePage() {
     where: { userId: currentUser.id }
   });
 
-  const csrfToken = await issueCsrfToken();
+  const csrfToken = await requestCsrfToken();
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr,320px]">
@@ -59,3 +59,5 @@ export default async function ProfilePage() {
     </div>
   );
 }
+
+

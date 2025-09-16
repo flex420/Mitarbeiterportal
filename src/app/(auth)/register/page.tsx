@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { issueCsrfToken } from "@/lib/csrf";
+import { requestCsrfToken } from "@/lib/csrf";
 import { redirect } from "next/navigation";
 import { registerAction } from "@/app/actions/auth";
 import { RegisterForm } from "@/components/forms/auth-form";
@@ -11,7 +11,7 @@ export default async function RegisterPage() {
   if (session?.user) {
     redirect("/dashboard");
   }
-  const csrfToken = await issueCsrfToken();
+  const csrfToken = await requestCsrfToken();
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
@@ -33,3 +33,5 @@ export default async function RegisterPage() {
     </div>
   );
 }
+
+

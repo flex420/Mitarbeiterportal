@@ -2,7 +2,7 @@ import { UserRoleForm } from "@/components/forms/user-role-form";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
-import { issueCsrfToken } from "@/lib/csrf";
+import { requestCsrfToken } from "@/lib/csrf";
 import { requireAdmin } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import { updateUserRoleAction } from "@/app/actions/users";
@@ -22,7 +22,7 @@ export default async function AdminPage() {
     })
   ]);
 
-  const csrfToken = await issueCsrfToken();
+  const csrfToken = await requestCsrfToken();
 
   return (
     <div className="space-y-8">
@@ -79,3 +79,5 @@ export default async function AdminPage() {
     </div>
   );
 }
+
+

@@ -1,7 +1,7 @@
 import { ShiftCalendar } from "@/components/calendar/shift-calendar";
 import { ShiftForm } from "@/components/forms/shift-form";
 import { auth } from "@/lib/auth";
-import { issueCsrfToken } from "@/lib/csrf";
+import { requestCsrfToken } from "@/lib/csrf";
 import { requireUser } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import dayjs from "@/lib/date";
@@ -25,7 +25,7 @@ export default async function ShiftPage() {
     prisma.user.findMany({ include: { profile: true } })
   ]);
 
-  const csrfToken = await issueCsrfToken();
+  const csrfToken = await requestCsrfToken();
 
   const events = shifts.map((shift) => ({
     id: shift.id,
@@ -78,3 +78,5 @@ export default async function ShiftPage() {
     </div>
   );
 }
+
+
